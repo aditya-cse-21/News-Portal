@@ -4,19 +4,23 @@ import { Link } from 'react-router-dom';
 
 const Home = () => {
   const [newsList, setNewsList] = useState([]);
+  const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000';
 
   useEffect(() => {
     const fetchNews = async () => {
       try {
-        const res = await axios.get('http://localhost:5000/api/news');
-        setNewsList(res.data);
+        const res = await axios.get(`${API_BASE_URL}/api/news`);
+        const data = Array.isArray(res.data) ? res.data : (res.data.news || []);
+        setNewsList(data);
       } catch (err) {
-        console.error('Failed to fetch news:', err.message);
+        setNewsList([]);
       }
     };
 
     fetchNews();
   }, []);
+
+  const safeNewsList = Array.isArray(newsList) ? newsList : [];
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -34,7 +38,7 @@ const Home = () => {
       <div className="max-w-5xl mx-auto px-4 pb-12">
         <h2 className="text-3xl font-bold text-blue-700 mb-8 text-center">Latest News</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {newsList.map((news) => (
+          {safeNewsList.map((news) => (
             <div
               key={news._id}
               className="bg-white rounded-xl shadow-md p-5 flex flex-col hover:shadow-xl transition-shadow duration-200"

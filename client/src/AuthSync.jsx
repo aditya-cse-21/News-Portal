@@ -11,8 +11,9 @@ function AuthSync() {
       try {
         if (isAuthenticated) {
           const token = await getAccessTokenSilently();
+          const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000';
           await axios.post(
-            'http://localhost:5000/api/users/auth0-login',
+            `${API_BASE_URL}/api/users/auth0-login`,
             {},
             {
               headers: {

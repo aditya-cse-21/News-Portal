@@ -9,11 +9,16 @@ const AuthButton = ({ customClass = '' }) => {
     const syncUserWithBackend = async () => {
       try {
         const token = await getAccessTokenSilently();
-        await axios.post('http://localhost:5000/api/users/auth0-login', {}, {
-          headers: {
-            Authorization: `Bearer ${token}`
+        const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000';
+        await axios.post(
+          `${API_BASE_URL}/api/users/auth0-login`,
+          {},
+          {
+            headers: {
+              Authorization: `Bearer ${token}`
+            }
           }
-        });
+        );
       } catch (err) {
         // Optionally handle error
       }

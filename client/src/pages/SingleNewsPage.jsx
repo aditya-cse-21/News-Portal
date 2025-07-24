@@ -21,7 +21,8 @@ const SingleNewsPage = () => {
           token = await getAccessTokenSilently();
           headers.Authorization = `Bearer ${token}`;
         }
-        const res = await axios.get(`http://localhost:5000/api/news/${id}`, { headers });
+        const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000';
+        const res = await axios.get(`${API_BASE_URL}/api/news/${id}`, { headers });
         setNews(res.data.news);
         setBlocked(res.data.blocked);
         setComments(res.data.comments);
@@ -40,13 +41,15 @@ const SingleNewsPage = () => {
     }
     try {
       const token = await getAccessTokenSilently();
-      const url = `http://localhost:5000/api/news/${id}/${type}`;
+      const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000';
+      const url = `${API_BASE_URL}/api/news/${id}/${type}`;
       await axios.post(url, {}, {
         headers: { Authorization: `Bearer ${token}` }
       });
 
       // Refresh news
-      const res = await axios.get(`http://localhost:5000/api/news/${id}`);
+      const API_BASE_URL_2 = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000';
+      const res = await axios.get(`${API_BASE_URL_2}/api/news/${id}`);
       setNews(res.data.news);
     } catch (err) {
       console.error('Action failed:', err.message);
@@ -63,8 +66,9 @@ const SingleNewsPage = () => {
 
     try {
       const token = await getAccessTokenSilently();
+      const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000';
       const res = await axios.post(
-        `http://localhost:5000/api/news/${id}/comment`,
+        `${API_BASE_URL}/api/news/${id}/comment`,
         { content: comment },
         { headers: { Authorization: `Bearer ${token}` } }
       );

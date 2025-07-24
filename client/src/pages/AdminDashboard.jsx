@@ -16,14 +16,16 @@ const AdminDashboard = () => {
   const [blockMsg, setBlockMsg] = useState({}); // Change to object
 
   const token = localStorage.getItem('adminToken');
+  const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000';
 
   useEffect(() => {
     const fetchNews = async () => {
       try {
-        const res = await axios.get('http://localhost:5000/api/news');
-        setNewsList(res.data);
+        const res = await axios.get(`${API_BASE_URL}/api/news`);
+        const data = Array.isArray(res.data) ? res.data : (res.data.news || []);
+        setNewsList(data);
       } catch (err) {
-        // Optionally handle error silently or show user-friendly message
+        setNewsList([]);
       }
     };
     fetchNews();
@@ -43,7 +45,7 @@ const AdminDashboard = () => {
       if (editId) {
         // Update news
         await axios.put(
-          `http://localhost:5000/api/news/${editId}`,
+          `${API_BASE_URL}/api/news/${editId}`,
           { title, content, image },
           { headers: { Authorization: `Bearer ${token}` } }
         );
@@ -51,7 +53,7 @@ const AdminDashboard = () => {
       } else {
         // Add news
         await axios.post(
-          'http://localhost:5000/api/news',
+          `${API_BASE_URL}/api/news`,
           { title, content, image },
           { headers: { Authorization: `Bearer ${token}` } }
         );
@@ -59,7 +61,7 @@ const AdminDashboard = () => {
       }
 
       // Refresh news list
-      const res = await axios.get('http://localhost:5000/api/news');
+      const res = await axios.get(`${API_BASE_URL}/api/news`);
       setNewsList(res.data);
 
       // Clear form
@@ -87,7 +89,7 @@ const AdminDashboard = () => {
     if (!confirm) return;
 
     try {
-      await axios.delete(`http://localhost:5000/api/news/${id}`, {
+      await axios.delete(`${API_BASE_URL}/api/news/${id}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       setNewsList(newsList.filter((n) => n._id !== id));
@@ -101,7 +103,7 @@ const AdminDashboard = () => {
 
     try {
       await axios.patch(
-        `http://localhost:5000/api/news/${newsId}/block-user`,
+        `${API_BASE_URL}/api/news/${newsId}/block-user`,
         { email: blockEmail[newsId] },
         { headers: { Authorization: `Bearer ${token}` } }
       );
